@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import './App.css';
 import UserInfo from './components/UserInfo';
 import Marksheet from './components/Marksheet';
@@ -32,7 +33,9 @@ class App extends Component {
     if(this.state.name === 'Administrator')
     {
         return(
+          <div>
           <UploadResult />
+          </div>
           );
     }
     else if(this.state.route === 'signin')

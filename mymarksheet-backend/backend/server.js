@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const knex = require('knex');
 const Cors = require('cors');
+const bcrypt = require('bcrypt-nodejs');
 
 const db = knex({
 	client: 'pg',
@@ -18,14 +19,28 @@ const app = express();
 app.use(Cors());
 app.use(bodyParser.json());
 
+
 app.post('/signin', (req,res) => {
 	const {email,password} = req.body;
+	let hashPass;
 
 	db.select('*').from('students').where('students.email','=', email)
 	.then(response => {
-		return res.json(response[0]);
+
+		bcrypt.compare(password, response[0].hash, function(err, resp) {
+		    // res == true
+		    if(resp)
+		    {
+		    	return res.status(200).json(response[0]);
+		    }
+		    else
+		    {
+		    	return res.status(400).json('Invalid login credentials.');		    	
+		    }
+		});
+
 	})
-	.catch(err => res.json('error occurred while processing your request'))
+	.catch(err => res.json('error occurred while processing your request.'))
 
 })
 
@@ -81,7 +96,6 @@ app.put('/uploadResults', (req,res) => {
 
     if(!rollno || !subcode || (!theory && theory !== 0) || (!lab && lab !== 0) || (!total && total !== 0) || !grade || (!gp && gp !== 0))
     {
-//      alert('Invalid data submitted!');
       console.log('error');
       if(lab === 0)
       {
@@ -114,7 +128,7 @@ app.put('/uploadResults', (req,res) => {
 	})
 	.catch(err => res.json('error occurred while processing your data entry request..'))
 }
-	})
+})
 
 app.listen(3000, () => {
 	console.log('running on port 3000');

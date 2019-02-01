@@ -1,5 +1,6 @@
 
 import React from 'react';
+import './UserInfo.css';
 
 class UserInfo extends React.Component {
 

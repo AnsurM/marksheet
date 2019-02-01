@@ -1,67 +1,11 @@
 
 import React from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import './bootstrap.min.css'; 
 import BootstrapTable from 'react-bootstrap-table-next';
 import 'tachyons';
 import './Marksheet.css';
 
-let state1 = {
-    products: [
-      {
-        id: 1,
-        subject: 'ICS',
-        'text': 3.0
-      }
-      ,
-      {
-        id: 2,
-        subject: 'English-1',
-        'text': 3.0
-      }
-      ,
-      {
-        id: 3,
-        subject: 'Islamiat',
-        'text': 3.0
-      }
-      ,
-      {
-        id: 4,
-        subject: 'PST',
-        'text': 3.0
-      }
-      ,
-      {
-        id: 5,
-        subject: 'Maths-1',
-        'text': 3.0
-      }
-      ,
-      {
-        id: 6,
-        subject: 'Subject-6',
-        'text': 3.0
-      }
-      ,
-      {
-        id: 7,
-        subject: 'Subject-7',
-        'text': 3.0
-      }
-   ]  
-  ,
-    
-    columns: [{
-      dataField: 'subject',
-      text: 'Subjects'
-    }
-    ,
-    {
-      dataField: 'gpa',
-      text: 'GPA'
-    }
-   ]
-}
 
 let columns = [{
 		      dataField: 'rollno',
@@ -78,6 +22,10 @@ let columns = [{
 		      text: 'Grade'},{
 		      dataField: 'gp',
 		      text: 'GP'}];
+let totalGP = 0.0;
+let CGPA = 0.0;
+let totalCGPA = 0.0;
+let semRec = 0;
 
 
 class Marksheet extends React.Component{
@@ -94,8 +42,6 @@ class Marksheet extends React.Component{
 
 	UNSAFE_componentWillMount(){
 
-		let semester = 0;
-
       fetch('http://localhost:3000/results',{
       method: 'post',
       headers: {'Content-Type': 'application/json'},
@@ -107,7 +53,6 @@ class Marksheet extends React.Component{
     .then(results => {
       if(results[0].rollno)
       {
-      	console.log('got results! ' + results[0]);
 		let state5 = {
 			sem1: [],
 			sem2: [],
@@ -120,11 +65,10 @@ class Marksheet extends React.Component{
 		};
 
       	for (var i = 0; i < results.length; i++) {
-//      		console.log(results[i]);
       			var product = {
       				id: i+1,
       				rollno: results[i].rollno,
-      				subject: (results[i].subcode + '-' + results[i].subName),
+      				subject: (results[i].subcode + ' --- ' + results[i].subName),
       				theory: results[i].theory,
       				lab: results[i].lab,
       				total: results[i].total,
@@ -176,21 +120,47 @@ class Marksheet extends React.Component{
       				default:
       					break;
       			}
-//      			console.log(state5);
-//				console.log('new ' + this.state.states.Semester1[0].products[0].subject);
       	}
-//				console.log(this.state.states.Semester1.products);
-			this.state.results = (state5);				
+//      		console.log(Object.values(state5)[0][0].gp);
+      		for(var k = 0; k < Object.values(state5).length; k++)
+      		{
+      			if(Object.values(state5)[k][0])
+      			{
+      				semRec++;
+		      		for(var j = 0; j < Object.values(state5)[k].length; j++)
+		      		{
+		      			totalGP = totalGP + parseFloat(Object.values(state5)[k][j].gp);
+		      		}      			
+		      			CGPA = parseFloat(((totalGP)/(Object.values(state5)[k].length)).toFixed(2));
+			   			totalCGPA = totalCGPA + parseFloat(CGPA);
+		      				
+		      				product = {
+		      				id: i+1,
+		      				rollno: "-",
+		      				subject: "-",
+		      				theory: "-",
+		      				lab: "-",
+		      				total: "-",
+		      				grade: "CGPA",
+		      				gp: CGPA,
+		      			}
+
+		      			Object.values(state5)[k].push(product);
+			      		totalGP = 0;
+		      	}
+      		}
+      		totalCGPA = totalCGPA / semRec;
+   			console.log(totalCGPA);
 			this.setState({
 			signInEmail: this.state.signInEmail,
-			results: this.state.results
+			results: state5
 		})
-			console.log(this.state.results);
 	}
 	})
 }
 
-	render(){		
+	render(){	
+		let key = 0;	
 	     if(this.state.results.sem1)
 	    {
 	 		const display = [];
@@ -198,7 +168,6 @@ class Marksheet extends React.Component{
     		for(var i = 0; i < Object.keys(this.state.results).length; i++)
     		{
 
-	   			 console.log(Object.values(this.state.results)[i][0]);
 			     if(Object.values(this.state.results)[i][0])
 				{
 	    			display.push(
@@ -215,13 +184,15 @@ class Marksheet extends React.Component{
 						</div>
 	    			);
 	    		}
+	    		key = i;
 	    	}
 
 		    return(
 				<div className = 'flex-column items-center'>
 					{
 					<div>
-					{display}		
+					{display}
+					<h3> Your Overall GPA after {semRec} semesters is {totalCGPA}</h3>
 					</div>
 					}
 				</div>
@@ -239,468 +210,3 @@ class Marksheet extends React.Component{
 }
 
 export default Marksheet;
-
-
-{
-/*
-	if(results.state[7])
-	{
-	return(
-		<div className = 'flex-column items-center'>
-			{
-			<div>		
-			<div className = 'flex'>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3 >Semester-1</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[0].products } 
-				        columns={ results.state[0].columns } />
-			    </div>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-2</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[1].products } 
-				        columns={ results.state[1].columns } />
-			    </div>
-			</div>
-			<div className = 'flex'>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-3</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[2].products } 
-				        columns={ results.state[2].columns } />
-			    </div>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-4</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[3].products } 
-				        columns={ results.state[3].columns } />
-			    </div>
-			</div>
-			<div className = 'flex'>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-5</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[4].products } 
-				        columns={ results.state[4].columns } />
-			    </div>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-6</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[5].products } 
-				        columns={ results.state[5].columns } />
-			    </div>
-			</div>
-			<div className = 'flex'>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-7</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[6].products } 
-				        columns={ results.state[6].columns } />
-			    </div>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-8</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[7].products } 
-				        columns={ results.state[7].columns } />
-			    </div>
-			</div>
-			</div>
-			}
-		</div>
-	);
-	}
-	else if(results.state[6])
-	{
-		return(
-		<div className = 'flex-column'>
-			{
-			<div>		
-			<div className = 'flex'>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-1</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[0].products } 
-				        columns={ results.state[0].columns } />
-			    </div>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-2</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[1].products } 
-				        columns={ results.state[1].columns } />
-			    </div>
-			</div>
-			<div className = 'flex'>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-3</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[2].products } 
-				        columns={ results.state[2].columns } />
-			    </div>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-4</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[3].products } 
-				        columns={ results.state[3].columns } />
-			    </div>
-			</div>
-			<div className = 'flex'>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-5</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[4].products } 
-				        columns={ results.state[4].columns } />
-			    </div>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-6</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[5].products } 
-				        columns={ results.state[5].columns } />
-			    </div>
-			</div>
-			<div className = 'flex'>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-7</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[6].products } 
-				        columns={ results.state[6].columns } />
-			    </div>
-			</div>
-			</div>
-			}
-		</div>
-		);
-	}
-	else if(results.state[5])
-	{
-		return(
-		<div className = 'flex-column'>
-			{
-			<div>		
-			<div className = 'flex'>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-1</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[0].products } 
-				        columns={ results.state[0].columns } />
-			    </div>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-2</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[1].products } 
-				        columns={ results.state[1].columns } />
-			    </div>
-			</div>
-			<div className = 'flex'>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-3</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[2].products } 
-				        columns={ results.state[2].columns } />
-			    </div>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-4</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[3].products } 
-				        columns={ results.state[3].columns } />
-			    </div>
-			</div>
-			<div className = 'flex'>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-5</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[4].products } 
-				        columns={ results.state[4].columns } />
-			    </div>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-6</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[5].products } 
-				        columns={ results.state[5].columns } />
-			    </div>
-			</div>
-			</div>
-			}
-		</div>
-		);
-	}
-	else if(results.state[4])
-	{
-		return(
-		<div className = 'flex-column'>
-			{
-			<div>		
-			<div className = 'flex'>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-1</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[0].products } 
-				        columns={ results.state[0].columns } />
-			    </div>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-2</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[1].products } 
-				        columns={ results.state[1].columns } />
-			    </div>
-			</div>
-			<div className = 'flex'>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-3</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[2].products } 
-				        columns={ results.state[2].columns } />
-			    </div>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-4</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[3].products } 
-				        columns={ results.state[3].columns } />
-			    </div>
-			</div>
-			<div className = 'flex'>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-5</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[4].products } 
-				        columns={ results.state[4].columns } />
-			    </div>
-			</div>
-			</div>
-			}
-		</div>
-		);
-	}
-	else if(results.state[3])
-	{
-		return(
-		<div className = 'flex-column'>
-			{
-			<div>		
-			<div className = 'flex'>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-1</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[0].products } 
-				        columns={ results.state[0].columns } />
-			    </div>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-2</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[1].products } 
-				        columns={ results.state[1].columns } />
-			    </div>
-			</div>
-			<div className = 'flex'>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-3</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[2].products } 
-				        columns={ results.state[2].columns } />
-			    </div>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-4</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[3].products } 
-				        columns={ results.state[3].columns } />
-			    </div>
-			</div>
-			<div className = 'flex'>
-			</div>
-			</div>
-			}
-		</div>
-		);
-	}
-	else if(results.state[2])
-	{
-		return(
-		<div className = 'flex-column'>
-			{
-			<div>		
-			<div className = 'flex'>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-1</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[0].products } 
-				        columns={ results.state[0].columns } />
-			    </div>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-2</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[1].products } 
-				        columns={ results.state[1].columns } />
-			    </div>
-			</div>
-			<div className = 'flex'>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-3</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[2].products } 
-				        columns={ results.state[2].columns } />
-			    </div>
-			</div>
-			</div>
-			}
-		</div>
-		);
-	}
-	else if(results.state[1])
-	{
-		return(
-		<div className = 'flex-column'>
-			{
-			<div>		
-			<div className = 'flex'>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-1</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[0].products } 
-				        columns={ results.state[0].columns } />
-			    </div>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-2</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[1].products } 
-				        columns={ results.state[1].columns } />
-			    </div>
-			</div>
-			</div>
-			}
-		</div>
-		);
-	}
-	else if(results.state[1])
-	{
-		return(
-		<div className = 'flex-column'>
-			{
-			<div>		
-			<div className = 'flex'>
-				<div className="container" style={{ marginTop: 20 }}>
-				        <h3>Semester-1</h3>
-				        <BootstrapTable 
-				        striped
-				        hover
-				        keyField='id' 
-				        data={ results.state[0].products } 
-				        columns={ results.state[0].columns } />
-			    </div>
-			</div>
-			</div>
-			}
-		</div>
-		);
-	}
-	else{
-		return(
-		<h1>You have no semester results uploaded!</h1>
-		);
-	}
-*/
-}

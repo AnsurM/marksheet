@@ -1,3 +1,38 @@
 .center {
   justify-content: center;
 }
+
+@font-face {
+font-family: 'Acme-Regular';
+font-style: normal;
+font-weight: normal;
+src: local('Acme-Regular'), url('Acme-Regular.ttf') format('ttf');
+}
+
+
+div {
+  font-family: 'Acme-Regular',monospace;
+  font-weight: normal;
+}
+
+.example-enter {
+  opacity: 0.01;
+  width: 0px;
+}
+
+.example-enter.example-enter-active {
+  opacity: 1;
+  width: 100px;
+  transition: 700ms;
+}
+
+.example-leave {
+  opacity: 1;
+  width: 100px;
+}
+
+.example-leave.example-leave-active {
+  opacity: 0.01;
+  width: 0px;
+  transition: 700ms;
+}
