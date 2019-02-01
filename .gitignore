@@ -1,0 +1,5 @@
+# ignore node modules
+/mymarksheet/node_modules
+
+# ignore node modules
+/mymarksheet-backend/backend/node_modules
