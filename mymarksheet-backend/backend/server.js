@@ -28,7 +28,6 @@ app.post('/signin', (req,res) => {
 	.then(response => {
 
 		bcrypt.compare(password, response[0].hash, function(err, resp) {
-		    // res == true
 		    if(resp)
 		    {
 		    	return res.status(200).json(response[0]);
@@ -49,7 +48,6 @@ app.post('/results', (req,res) => {
 const rollno = req.body.rollNo.rollNo;
 db.select('*').from('students').where('students.rollno','=',rollno)
 .then(response => {
-//	console.log(response);
 	if(response.length)
 	{
 		db.from('results')
@@ -90,44 +88,51 @@ db.select('*').from('students').where('students.rollno','=',rollno)
 })
 
 app.put('/uploadResults', (req,res) => {
-	console.log(req.body);
 
 	const {rollno,subcode,theory,lab,total,grade,gp} = req.body;
 
     if(!rollno || !subcode || (!theory && theory !== 0) || (!lab && lab !== 0) || (!total && total !== 0) || !grade || (!gp && gp !== 0))
     {
-      console.log('error');
-      if(lab === 0)
-      {
-      	console.log(true);
-      }
+    	res.status(400).json('Invalid data entry');
     }
     else
     {
-	db.insert(
-		{
-			rollno: rollno,
-			subcode: subcode,
-			theory: theory,
-			lab: lab	,
-			total: (theory+lab),
-			grade: grade,
-			gp: gp 
-		}
-	)
-	.into('results')
-	.then(response => {
-		if(response.command)
-		{
-		return res.json('data updated!');
-		}
-		else 
-		{
-		return res.json('error uploading data');
-		}
-	})
-	.catch(err => res.json('error occurred while processing your data entry request..'))
-}
+
+		db.select('*').from('subjects').where('subjects.subcode','=',subcode)
+		.then(response => {
+			if(response.length)
+			{
+				db.insert(
+					{
+						rollno: rollno,
+						subcode: subcode,
+						theory: theory,
+						lab: lab	,
+						total: (theory+lab),
+						grade: grade,
+						gp: gp 
+					}
+				)
+				.into('results')
+				.then(response => {
+					console.log(response);
+					if(response.command)
+					{
+					return res.json('data updated!');
+					}
+					else 
+					{
+					return res.json('error uploading data');
+					}
+				})
+				.catch(err => res.json('Results for this subject already recorded for this student.'))
+			}
+			else
+			{
+				res.status(400).json('Please enter a valid subject code');
+			}
+		})
+	}
 })
 
 app.listen(3000, () => {

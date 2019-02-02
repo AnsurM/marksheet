@@ -1,7 +1,7 @@
 h1 , h3{
 	color: green;
 	text-align: center;
-	margin-top: 10px;
+	margin-top: 5px;
 	color: black;
 }
 
@@ -9,12 +9,13 @@ h1 , h3{
 .data{
 	background-color: grey;
 	color: #EBEB09;
-	font-size: 125%;
+	font-size: 100%;
 	text-align: center;
 }
 
 h3 {
-  font-size: 180% !important;
+  font-size: 140% !important;
+  color: mediumvioletred;
 }
 
 .todo-item {
@@ -46,4 +47,8 @@ h3 {
   opacity: 0.01;
   width: 0px;
   transition: 700ms;
+}
+
+.sub{
+  margin-left: 45%;
 }

@@ -39,6 +39,10 @@ class Marksheet extends React.Component{
 	    }
 	}
 
+	  onSignOut = () => {
+	  	this.props.ChangeState2('','signin');
+	  }
+
 
 	UNSAFE_componentWillMount(){
 
@@ -150,17 +154,17 @@ class Marksheet extends React.Component{
 		      	}
       		}
       		totalCGPA = totalCGPA / semRec;
-   			console.log(totalCGPA);
 			this.setState({
 			signInEmail: this.state.signInEmail,
 			results: state5
 		})
+			totalCGPA = 0;
+			semRec = 0;
 	}
 	})
 }
 
 	render(){	
-		let key = 0;	
 	     if(this.state.results.sem1)
 	    {
 	 		const display = [];
@@ -172,7 +176,7 @@ class Marksheet extends React.Component{
 				{
 	    			display.push(
 						<div key={i.toString()} className = 'flex data'>
-							<div className="container" style={{ marginTop: 20 }}>
+							<div className="container" style={{ marginTop: 10 }}>
 							        <h3 className = 'data'>Semester-{(i+1).toString()}</h3>
 							        <BootstrapTable 
 							        striped
@@ -184,17 +188,18 @@ class Marksheet extends React.Component{
 						</div>
 	    			);
 	    		}
-	    		key = i;
 	    	}
 
 		    return(
+		    	<div>
 				<div className = 'flex-column items-center'>
 					{
 					<div>
-					{display}
-					<h3> Your Overall GPA after {semRec} semesters is {totalCGPA}</h3>
+						{display}
+						<h3> Your Overall GPA after {semRec} semesters is {totalCGPA}</h3>
 					</div>
 					}
+				</div>
 				</div>
 		    	);
 		}

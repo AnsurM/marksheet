@@ -14,7 +14,6 @@ class UploadResult extends React.Component {
 
   constructor(props){
     super(props);
-
     this.state = initialState;
 
   }
@@ -32,11 +31,13 @@ class UploadResult extends React.Component {
     this.setState({lab: parseInt(event.target.value,10)});
   }
 
+  onSignOut = () => {
+    this.props.ChangeState2('','signin');
+  }
+
   onSubmitResult = () => {
 
     let {rollno, subcode,theory, lab} = this.state;
-
-    console.log(theory + ' = ' + lab);
 
     if(theory === '-')
     {
@@ -50,7 +51,6 @@ class UploadResult extends React.Component {
     if((!rollno) || (!subcode))
     {
       alert('Invalid form entry!');
-      console.log(lab.length);
     }
     else
     {
@@ -60,8 +60,6 @@ class UploadResult extends React.Component {
     let calcGP = 0.0;
 
     calcTotal = parseInt(calcTotal, 10);
-
-    console.log('total is ' + calcTotal);
 
       if(calcTotal > 49)
       {
@@ -162,13 +160,16 @@ class UploadResult extends React.Component {
     })
     .then(response => response.json())
     .then(result => {
-        console.log(result);
+        alert(result);
     })
     .catch(err => console.log('results were not uploaded'))
+
   }
 }
 
   render(){
+
+
     return (
       <article className="br3 ba b--black-10 mv4 w-100 w-50-m w-25-l mw6 shadow-5 center">
       <main className="pa4 black-80">
@@ -222,6 +223,14 @@ class UploadResult extends React.Component {
             className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" 
             type="submit" 
             value="Upload Result"/>
+          </div>
+          <hr />
+          <div className="">
+            <input 
+            onClick = {this.onSignOut}
+            className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" 
+            type="submit" 
+            value="Sign Out"/>
           </div>
         </div>
       </main>

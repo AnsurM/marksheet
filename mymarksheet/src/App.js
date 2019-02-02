@@ -5,6 +5,7 @@ import UserInfo from './components/UserInfo';
 import Marksheet from './components/Marksheet';
 import Scroll from './components/Scroll';
 import SignIn from './components/SignIn';
+import SignOut from './components/SignOut';
 import UploadResult from './components/UploadResult';
 import 'tachyons';
 
@@ -28,13 +29,17 @@ class App extends Component {
     this.setState({route: route, email: email, name: name, rollNo: rollNo})
   }
 
+  ChangeState2 = (name,route) => {
+    this.setState({route: route, email: this.state.email, name: name, rollNo: this.state.rollNo})
+  }
+
   render() {
     
     if(this.state.name === 'Administrator')
     {
         return(
           <div>
-          <UploadResult />
+          <UploadResult ChangeState2={this.ChangeState2}/>
           </div>
           );
     }
@@ -51,11 +56,10 @@ class App extends Component {
     
       return (
           <div>
-          <div className = 'center'>
-          <UserInfo currentData={this.state}/>
-          </div>
+          <UserInfo currentData={this.state} ChangeState2={this.ChangeState2}/>
+          <SignOut ChangeState2 = {this.ChangeState2}/>
           <Scroll>
-          <Marksheet rollNo={this.state.rollNo}/>
+          <Marksheet rollNo={this.state.rollNo} ChangeState2 = {this.ChangeState2}/>
           </Scroll>
           </div>
            );
