@@ -1,8 +1,6 @@
-h1 , h3{
-	color: green;
-	text-align: center;
-	margin-top: 5px;
-	color: black;
+h1 , h2, h3{
+	text-align: center !important;
+	margin-top: 5px !important;
 }
 
 
@@ -15,7 +13,6 @@ h1 , h3{
 
 h3 {
   font-size: 140% !important;
-  color: mediumvioletred;
 }
 
 .todo-item {
