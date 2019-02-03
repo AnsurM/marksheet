@@ -196,7 +196,7 @@ class Marksheet extends React.Component{
 					{
 					<div>
 						{display}
-						<h3> Your Overall GPA after {semRec} semesters is {totalCGPA}</h3>
+						<h3 className = 'gpa'> Your Overall GPA after {semRec} semesters is {totalCGPA}</h3>
 					</div>
 					}
 				</div>

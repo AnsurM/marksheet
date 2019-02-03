@@ -20,6 +20,43 @@ app.use(Cors());
 app.use(bodyParser.json());
 
 
+
+app.post('/register', (req,res) => {
+
+
+	const {email, password, name} = req.body;
+	db.select('*').from('students').where('students.email','=',email)
+	.then(response => {
+		if(response.length){
+			return 	res.status(400).json('Bad request');
+		}
+		else {		
+
+			bcrypt.hash(password, null, null, function(err, hash) {
+
+				db.insert({
+					name: name,
+					email: email,
+					hash: hash
+				})
+				.into('students')
+				.then(response => {
+					if(response.command)
+					{
+					return res.status(200).json(true);
+					}
+					else 
+					{
+					return res.status(400).json(false);
+					}
+				})
+				.catch(err => res.json('Student already registered in our database'))
+
+			});
+		}
+	})
+})
+
 app.post('/signin', (req,res) => {
 	const {email,password} = req.body;
 	let hashPass;
@@ -40,6 +77,15 @@ app.post('/signin', (req,res) => {
 
 	})
 	.catch(err => res.json('error occurred while processing your request.'))
+
+})
+
+app.post('/rollno', (req,res) => {	
+	db.select('rollno','name', 'email').from('students')
+	.then(response => {
+		return res.json(response);
+	})
+	.catch(err => res.json('error getting list'));
 
 })
 
@@ -115,7 +161,6 @@ app.put('/uploadResults', (req,res) => {
 				)
 				.into('results')
 				.then(response => {
-					console.log(response);
 					if(response.command)
 					{
 					return res.json('data updated!');

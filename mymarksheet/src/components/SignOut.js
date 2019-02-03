@@ -5,7 +5,7 @@ const SignOut = ({ChangeState2}) => {
 			<div>
                  <input 
                  onClick = {() => ChangeState2('','signin')}
-                 className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib flex-column items-center sub" 
+                 className="input b ph3 pv2 input-reset ba b--black hover-bg-green grow pointer f6 dib flex-column items-center sub" 
                  type="submit" 
                  value="Sign Out"/>
 			</div>

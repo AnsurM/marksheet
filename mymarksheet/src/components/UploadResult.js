@@ -1,4 +1,5 @@
 import React from 'react';
+import Register from './Register';
 
 const initialState = {
       rollno: 0,
@@ -33,6 +34,14 @@ class UploadResult extends React.Component {
 
   onSignOut = () => {
     this.props.ChangeState2('','signin');
+  }
+
+  onRegister = () => {
+    this.props.ChangeState2('','register');
+  }
+
+  onGetRollNoList = () => {
+    this.props.ChangeState2('Administrator','rollnolist');
   }
 
   onSubmitResult = () => {
@@ -179,7 +188,7 @@ class UploadResult extends React.Component {
             <div className="mt3">
               <label className="db fw6 lh-copy f6" htmlFor="email-address">Roll No</label>
               <input 
-              className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" 
+              className="entry pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" 
               type="number" 
               name="rollno"  
               id="rollno"
@@ -189,7 +198,7 @@ class UploadResult extends React.Component {
             <div className="mt3">
               <label className="db fw6 lh-copy f6" htmlFor="email-address">Subject Code</label>
               <input 
-              className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" 
+              className="entry pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" 
               type="text" 
               name="SubjectCode"  
               id="subjectCode"
@@ -199,7 +208,7 @@ class UploadResult extends React.Component {
             <div className="mt3">
               <label className="db fw6 lh-copy f6" htmlFor="email-address">Theory Marks</label>
               <input 
-              className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" 
+              className="entry pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" 
               type="number" 
               name="TheoryMarks"  
               id="theoryMarks"
@@ -209,7 +218,7 @@ class UploadResult extends React.Component {
             <div className="mt3">
               <label className="db fw6 lh-copy f6" htmlFor="email-address">Lab Marks</label>
               <input 
-              className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" 
+              className="entry pa2 input-reset ba bg-transparent hover-bg-black w-100" 
               type="number" 
               name="LabMarks"  
               id="labMarks"
@@ -217,10 +226,11 @@ class UploadResult extends React.Component {
               />
             </div>
           </fieldset>
+          <hr />
           <div className="">
             <input 
             onClick = {this.onSubmitResult}
-            className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" 
+            className="input b ph3 pv2 input-reset ba b--black hover-bg-green grow pointer f6 dib" 
             type="submit" 
             value="Upload Result"/>
           </div>
@@ -228,9 +238,22 @@ class UploadResult extends React.Component {
           <div className="">
             <input 
             onClick = {this.onSignOut}
-            className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" 
+            className="input b ph3 pv2 input-reset ba b--black hover-bg-green grow pointer f6 dib" 
             type="submit" 
             value="Sign Out"/>
+          </div>
+          <hr />
+          <div>
+            <input 
+            onClick = {this.onRegister}
+            className="input b ph3 pv2 input-reset ba b--black hover-bg-green grow pointer f6 dib mh3" 
+            type="submit" 
+            value="Register New Student"/>
+            <input 
+            onClick = {this.onGetRollNoList}
+            className="input b ph3 pv2 input-reset ba b--black hover-bg-green grow pointer f6 dib mh3" 
+            type="submit" 
+            value="Student Roll No"/>
           </div>
         </div>
       </main>
