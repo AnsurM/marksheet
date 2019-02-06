@@ -9,8 +9,8 @@ import './Marksheet.css';
 
 let columns = [{
 		      dataField: 'rollno',
-		      text: 'Roll No'},{
-		      dataField: 'subject',
+				      text: 'Roll No'},{
+      dataField: 'subject',
 		      text: 'Subject'},{
 		      dataField: 'theory',
 		      text: 'Theory'},{
@@ -25,6 +25,8 @@ let columns = [{
 let totalGP = 0.0;
 let CGPA = 0.0;
 let totalCGPA = 0.0;
+let cgpafor3 = 0.0;
+let cgpafor2p8 = 0.0;
 let semRec = 0;
 
 
@@ -153,6 +155,11 @@ class Marksheet extends React.Component{
 			      		totalGP = 0;
 		      	}
       		}
+      		cgpafor2p8 = 22.4 - (totalCGPA);
+      		cgpafor2p8 = parseFloat((cgpafor2p8 / (8-semRec)).toFixed(2));
+      		cgpafor3 = 24 - (totalCGPA);
+      		cgpafor3 = parseFloat((cgpafor3 / (8-semRec)).toFixed(2));
+      		console.log(`cgpa 2.8 require gpa ${cgpafor2p8} and cgpa 3 require gpa ${cgpafor3} in next ${semRec} semesters`);
       		totalCGPA = totalCGPA / semRec;
 			this.setState({
 			signInEmail: this.state.signInEmail,
@@ -197,6 +204,10 @@ class Marksheet extends React.Component{
 					<div>
 						{display}
 						<h3 className = 'gpa'> Your Overall GPA after {semRec} semesters is {totalCGPA}</h3>
+						<hr />
+						<p className='f3 gpa'> GPA Requirements in next {semRec} semesters:</p>
+						<p className='f4 gpa'> CGPA 2.8 requires GPA: {cgpafor2p8}</p>
+						<p className='f4 gpa'> CGPA 3 requires GPA: {cgpafor3}</p>
 					</div>
 					}
 				</div>

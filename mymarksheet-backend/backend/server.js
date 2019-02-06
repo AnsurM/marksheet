@@ -143,38 +143,46 @@ app.put('/uploadResults', (req,res) => {
     }
     else
     {
-
-		db.select('*').from('subjects').where('subjects.subcode','=',subcode)
+    	db.select('*').from('students').where('students.rollno','=',rollno)
 		.then(response => {
 			if(response.length)
 			{
-				db.insert(
-					{
-						rollno: rollno,
-						subcode: subcode,
-						theory: theory,
-						lab: lab	,
-						total: (theory+lab),
-						grade: grade,
-						gp: gp 
-					}
-				)
-				.into('results')
+				db.select('*').from('subjects').where('subjects.subcode','=',subcode)
 				.then(response => {
-					if(response.command)
+					if(response.length)
 					{
-					return res.json('data updated!');
+						db.insert(
+							{
+								rollno: rollno,
+								subcode: subcode,
+								theory: theory,
+								lab: lab	,
+								total: (theory+lab),
+								grade: grade,
+								gp: gp 
+							}
+						)
+						.into('results')
+						.then(response => {
+							if(response.command)
+							{
+							return res.json('data updated!');
+							}
+							else 
+							{
+							return res.json('error uploading data');
+							}
+						})
+						.catch(err => res.json('Results for this subject already recorded for this student.'))
 					}
-					else 
+					else
 					{
-					return res.json('error uploading data');
+						res.status(400).json('Please enter a valid subject code');
 					}
-				})
-				.catch(err => res.json('Results for this subject already recorded for this student.'))
+			})
 			}
-			else
-			{
-				res.status(400).json('Please enter a valid subject code');
+			else{
+				res.status(400).json("This Roll no doesn't exist.");
 			}
 		})
 	}
